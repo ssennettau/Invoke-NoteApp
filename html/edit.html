@@ -23,6 +23,7 @@
                 <input type="hidden" name="id" value="{{ id }}" />
                 <input type="hidden" name="title" value="{{ title }}" />
                 <button type="button" class="btn btn-primary" hx-post="/edit" hx-target="#statusMessage" hx-swap="outerHtml">Save</button>
+                <a href="/view/{{ id }}" class="btn btn-default">Cancel</a>
             </form>
         </div>
     </body>
