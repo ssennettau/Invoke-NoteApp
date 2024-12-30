@@ -55,6 +55,7 @@ function Handle-Request {
                     $bKill = $true
                 }
                 default {
+                    # TODO: Even for a crappy app like this, this is some exceptional heresy.
                     if ($Request.Url.AbsolutePath -like "/post*") {
                         $page = Get-Content -Path "html/post.html" -Raw
                         $navbarComponent = Get-Content -Path "html/components/navbar.html" -Raw
@@ -104,6 +105,23 @@ function Handle-Request {
                 $posts | ConvertTo-Json -Compress | Set-Content -Path "data/blogPosts.json"
 
                 $responseString = '<div id="statusMessage" class="alert alert-success" role="alert"><strong>Successful post!</strong> Check it out on the home page</div>'
+            } elseif ($Request.Url.AbsolutePath -eq "/delete") {
+                $inputStream = New-Object System.IO.StreamReader($Request.InputStream)
+                $data = $inputStream.ReadToEnd()
+
+                $responseTable = @{}
+                $data -split "&" | ForEach-Object {
+                    $key, $value = $_ -split "="
+                    $value = [System.Web.HttpUtility]::UrlDecode($value)
+                    $responseTable.Add($key, $value)
+                }
+
+                $posts = Get-Content -Path "data/blogPosts.json" | ConvertFrom-Json
+                $posts.posts = $posts.posts | Where-Object { $_.id -ne $responseTable.id }
+                $posts | ConvertTo-Json -Compress | Set-Content -Path "data/blogPosts.json"
+
+                Write-Host "🗑  Post deleted: $($responseTable.title) ($($responseTable.id))"
+                $responseString = '<div id="statusMessage" class="alert alert-success" role="alert"><strong>Post deleted!</strong> Check it out on the home page</div>'
             } else {
                 $responseString = "<html><body><h1>404 Not Found</h1></body></html>"
                 $Response.StatusCode = 404

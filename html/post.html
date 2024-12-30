@@ -11,11 +11,19 @@
     <body>
         {{ navbar }}
         <div class="container">
+            <div id="statusMessage" class="alert" role="alert"></div>
             <h1 class="">{{ title }}</h1>
             <p>{{ author }} | {{ date }}</p>
             <div id="content">
                 {{ content }}
             </div>
+            <hr />
+            <h2>Actions</h2>
+            <form>
+                <input type="hidden" name="id" value="{{ id }}" />
+                <input type="hidden" name="title" value="{{ title }}" />
+                <button type="button" class="btn btn-danger" hx-post="/delete" hx-target="#statusMessage" hx-swap="outerHtml">Delete</button>
+            </form>
         </div>
     </body>
 </html>
