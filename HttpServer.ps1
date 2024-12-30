@@ -55,6 +55,7 @@ function Handle-Request {
                 }
                 default {
                     $responseString = "<html><body><h1>404 Not Found</h1></body></html>"
+                    $Response.StatusCode = 404
                 }
             }
         }
@@ -91,10 +92,12 @@ function Handle-Request {
                 $responseString = '<div id="statusMessage" class="alert alert-success" role="alert"><strong>Successful post!</strong> Check it out on the home page</div>'
             } else {
                 $responseString = "<html><body><h1>404 Not Found</h1></body></html>"
+                $Response.StatusCode = 404
             }
         }
         default {
             $responseString = "<html><body><h1>Method Not Supported</h1></body></html>"
+            $Response.StatusCode = 405
         }
     }
 
