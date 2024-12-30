@@ -14,16 +14,15 @@
             <div id="statusMessage" class="alert" role="alert"></div>
             <h1 class="">{{ title }}</h1>
             <p>{{ author }} | {{ date }}</p>
-            <div id="content">
-                {{ content }}
-            </div>
-            <hr />
-            <h2>Actions</h2>
             <form>
+                <div id="contentArea">
+                    <textarea class="form-control" id="content" name="content">{{ content }}</textarea>
+                </div>
+                <hr />
+                <h2>Actions</h2>
                 <input type="hidden" name="id" value="{{ id }}" />
                 <input type="hidden" name="title" value="{{ title }}" />
-                <a href="/edit/{{ id }}" class="btn btn-primary">Edit</a>
-                <button type="button" class="btn btn-danger" hx-post="/delete" hx-target="#statusMessage" hx-swap="outerHtml">Delete</button>
+                <button type="button" class="btn btn-primary" hx-post="/edit" hx-target="#statusMessage" hx-swap="outerHtml">Save</button>
             </form>
         </div>
     </body>
