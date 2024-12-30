@@ -87,7 +87,7 @@ function Handle-Request {
                 $posts.posts += $newPost
                 $posts | ConvertTo-Json -Compress | Set-Content -Path "data/blogPosts.json"
 
-                $responseString = "<html><body><h1>Post Received</h1></body></html>"
+                $responseString = '<div id="statusMessage" class="alert alert-success" role="alert"><strong>Successful post!</strong> Check it out on the home page</div>'
             } else {
                 $responseString = "<html><body><h1>404 Not Found</h1></body></html>"
             }

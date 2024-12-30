@@ -10,13 +10,20 @@
     </head>
     <body>
         {{ navbar }}
-        <h1 class="">Welcome to this horrible site</h1>
-        <p>You were warned</p>
-        <div id="statusMessage">&nbsp;</div>
-        <form>
-            title: <input type="text" name="title" /><br />
-            content: <textarea name="content"></textarea><br />
-            <button type="submit" hx-post="/post" hx-Target="#statusMessage">Create</button>
-        </form>
+        <div class="container">
+            <h1 class="">Create a blog post</h1>
+            <p>Add to the horrors</p>
+            <div id="statusMessage" class="alert" role="alert">&nbsp;</div>
+            <form>
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon">Title</span>
+                        <input type="text" class="form-control" id="title" name="title" />
+                    </div>
+                    <textarea class="form-control" id="content" name="content"></textarea>
+                    <button type="submit" hx-post="/post" hx-Target="#statusMessage" hx-swap="outerHtml">Create</button>
+                </div>
+            </form>
+        </div>
     </body>
 </html>
