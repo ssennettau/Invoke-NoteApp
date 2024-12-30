@@ -2,22 +2,22 @@
     "posts": [
         {
             "id": 1,
-            "title": "My first blog post",
-            "content": "This is my first blog post. I'm so happy to be here!",
+            "title": "My first note",
+            "content": "This is my first note. I'm so happy to be here!",
             "author": "John Doe",
             "date": "2020-01-01"
         },
         {
             "id": 2,
-            "title": "My second blog post",
-            "content": "This is my second blog post. I'm so happy to be here!",
+            "title": "My second note",
+            "content": "This is my second note. I'm still kinda happy to be here.",
             "author": "John Doe",
             "date": "2020-01-02"
         },
         {
             "id": 3,
             "title": "My third blog post",
-            "content": "This is my third blog post. I'm so happy to be here!",
+            "content": "This is my third note. Happiness no longer abounds.",
             "author": "John Doe",
             "date": "2020-01-03"
         }

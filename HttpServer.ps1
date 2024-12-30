@@ -1,5 +1,7 @@
+#!/usr/bin/env pwsh
+
 # Define the port and listener
-$port = 8085
+$port = $args[0] || 8080
 $listener = [System.Net.HttpListener]::new()
 $listener.Prefixes.Add("http://*:$port/")
 $listener.Start()
@@ -37,7 +39,7 @@ function Handle-Request {
                     $page = $page -replace "{{ navbar }}", $navbarComponent
 
                     $postTemplate = Get-Content -Path "html/components/post-template.html" -Raw
-                    $posts = Get-Content -Path "data/blogPosts.json" | ConvertFrom-Json
+                    $posts = Get-Content -Path "data/notes.json" | ConvertFrom-Json
 
                     $postHtml = $posts.posts | Sort-Object -Descending "id" | ForEach-Object {
                         $post = $postTemplate -replace "{{ title }}", $_.title -replace "{{ date }}", $_.date -replace "{{ content }}", $_.content -replace "{{ author }}", $_.author -replace "{{ id }}", $_.id
@@ -74,7 +76,7 @@ function Handle-Request {
                         $page = $page -replace "{{ navbar }}", $navbarComponent
 
                         $postId = $Request.Url.AbsolutePath -replace "/post/", ""
-                        $posts = Get-Content -Path "data/blogPosts.json" | ConvertFrom-Json
+                        $posts = Get-Content -Path "data/notes.json" | ConvertFrom-Json
                         $post = $posts.posts | Where-Object { $_.id -eq $postId }
 
                         $page = $page -replace "{{ title }}", $post.title -replace "{{ date }}", $post.date -replace "{{ content }}", $post.content -replace "{{ author }}", $post.author -replace "{{ id }}", $post.id
@@ -84,7 +86,7 @@ function Handle-Request {
                         $navbarComponent = Get-Content -Path "html/components/navbar.html" -Raw
                         $page = $page -replace "{{ navbar }}", $navbarComponent
                         $postId = $Request.Url.AbsolutePath -replace "/edit/", ""
-                        $posts = Get-Content -Path "data/blogPosts.json" | ConvertFrom-Json
+                        $posts = Get-Content -Path "data/notes.json" | ConvertFrom-Json
                         $post = $posts.posts | Where-Object { $_.id -eq $postId }
                         $page = $page -replace "{{ title }}", $post.title -replace "{{ date }}", $post.date -replace "{{ content }}", $post.content -replace "{{ author }}", $post.author -replace "{{ id }}", $post.id
                         $responseString = $page
@@ -114,7 +116,7 @@ function Handle-Request {
 
                 Write-Host "📝 New post received: $($responseTable.title)"
 
-                $posts = Get-Content -Path "data/blogPosts.json" | ConvertFrom-Json
+                $posts = Get-Content -Path "data/notes.json" | ConvertFrom-Json
                 $newPost            = [PSCustomObject]@{
                     id              = $posts.posts[-1].id + 1
                     title           = $responseTable.title
@@ -123,7 +125,7 @@ function Handle-Request {
                     content         = $responseTable.content
                 }
                 $posts.posts += $newPost
-                $posts | ConvertTo-Json -Compress | Set-Content -Path "data/blogPosts.json"
+                $posts | ConvertTo-Json -Compress | Set-Content -Path "data/notes.json"
 
                 $responseString = '<div id="statusMessage" class="alert alert-success" role="alert"><strong>Successful post!</strong> Check it out on the home page</div>'
             } elseif ($Request.Url.AbsolutePath -eq "/edit") {
@@ -136,14 +138,14 @@ function Handle-Request {
                     $value = [System.Web.HttpUtility]::UrlDecode($value)
                     $responseTable.Add($key, $value)
                 }
-                $posts = Get-Content -Path "data/blogPosts.json" | ConvertFrom-Json
+                $posts = Get-Content -Path "data/notes.json" | ConvertFrom-Json
                 $posts.posts | ForEach-Object {
                     if ($_.id -eq $responseTable.id) {
                         $_.title = $responseTable.title
                         $_.content = $responseTable.content
                     }
                 }
-                $posts | ConvertTo-Json -Compress | Set-Content -Path "data/blogPosts.json"
+                $posts | ConvertTo-Json -Compress | Set-Content -Path "data/notes.json"
                 Write-Host "📝 Post edited: $($responseTable.title) ($($responseTable.id))"
 
                 $responseString = "<div id=`"statusMessage`" class=`"alert alert-success`" role=`"alert`"><strong>Post edited!</strong> Check it out <a href=`"/post/$($responseTable.id)`">here</a>.</div>"
@@ -158,9 +160,9 @@ function Handle-Request {
                     $responseTable.Add($key, $value)
                 }
 
-                $posts = Get-Content -Path "data/blogPosts.json" | ConvertFrom-Json
+                $posts = Get-Content -Path "data/notes.json" | ConvertFrom-Json
                 $posts.posts = $posts.posts | Where-Object { $_.id -ne $responseTable.id }
-                $posts | ConvertTo-Json -Compress | Set-Content -Path "data/blogPosts.json"
+                $posts | ConvertTo-Json -Compress | Set-Content -Path "data/notes.json"
 
                 Write-Host "🗑  Post deleted: $($responseTable.title) ($($responseTable.id))"
                 $responseString = '<div id="statusMessage" class="alert alert-success" role="alert"><strong>Post deleted!</strong> Check it out on the home page</div>'
