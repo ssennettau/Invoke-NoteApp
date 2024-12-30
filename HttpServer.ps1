@@ -4,9 +4,6 @@ $listener = [System.Net.HttpListener]::new()
 $listener.Prefixes.Add("http://*:$port/")
 $listener.Start()
 
-# Import HTML templates
-#./HtmlTemplates.ps1
-
 Write-Host "most ~cursed~ web server ever written"
 Write-Host "👂 Listening on http://localhost:$port...`r`n"
 
@@ -17,10 +14,12 @@ function Handle-Request {
         [System.Net.HttpListenerResponse]$Response
     )
 
+    # TODO: Refactor these into separate functions
     switch ($Request.HttpMethod) {
         "GET" {
             switch ($Request.Url.AbsolutePath) {
                 "/" {
+                    # TODO: Page templating
                     $page = Get-Content -Path "html/index.html" -Raw
                     $navbarComponent = Get-Content -Path "html/components/navbar.html" -Raw
                     $page = $page -replace "{{ navbar }}", $navbarComponent
@@ -48,6 +47,7 @@ function Handle-Request {
                     $responseString = $page
                 }
                 "/kill" {
+                    # Totally suitable for production - don't worry about it
                     Write-Host "💀 /kill command acknowledged..."
                     $responseString = "<html><body><h1>ded.</h1></body></html>"
 
@@ -60,6 +60,7 @@ function Handle-Request {
         }
         "POST" {
             if ($Request.Url.AbsolutePath -eq "/data") {
+                # Test endpoint for receiving data
                 $inputStream = New-Object System.IO.StreamReader($Request.InputStream)
                 $data = $inputStream.ReadToEnd()
                 $responseString = "<html><body><h1>Data Received</h1><p>$data</p></body></html>"
