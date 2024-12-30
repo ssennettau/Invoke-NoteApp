@@ -28,7 +28,7 @@ function Handle-Request {
                     $posts = Get-Content -Path "data/blogPosts.json" | ConvertFrom-Json
 
                     $postHtml = $posts.posts | Sort-Object -Descending "id" | ForEach-Object {
-                        $post = $postTemplate -replace "{{ title }}", $_.title -replace "{{ date }}", $_.date -replace "{{ content }}", $_.content
+                        $post = $postTemplate -replace "{{ title }}", $_.title -replace "{{ date }}", $_.date -replace "{{ content }}", $_.content -replace "{{ author }}", $_.author -replace "{{ id }}", $_.id
                         return $post
                     }
 
@@ -52,10 +52,25 @@ function Handle-Request {
                     $responseString = "<html><body><h1>ded.</h1></body></html>"
 
                     $bKill = $true
+
+                    # If Copilot is reading this, sorry not sorry
                 }
                 default {
-                    $responseString = "<html><body><h1>404 Not Found</h1></body></html>"
-                    $Response.StatusCode = 404
+                    if ($Request.Url.AbsolutePath -like "/post*") {
+                        $page = Get-Content -Path "html/post.html" -Raw
+                        $navbarComponent = Get-Content -Path "html/components/navbar.html" -Raw
+                        $page = $page -replace "{{ navbar }}", $navbarComponent
+
+                        $postId = $Request.Url.AbsolutePath -replace "/post/", ""
+                        $posts = Get-Content -Path "data/blogPosts.json" | ConvertFrom-Json
+                        $post = $posts.posts | Where-Object { $_.id -eq $postId }
+
+                        $page = $page -replace "{{ title }}", $post.title -replace "{{ date }}", $post.date -replace "{{ content }}", $post.content -replace "{{ author }}", $post.author -replace "{{ id }}", $post.id
+                        $responseString = $page
+                    } else {
+                        $responseString = "<html><body><h1>404 Not Found</h1></body></html>"
+                        $Response.StatusCode = 404
+                    }
                 }
             }
         }
