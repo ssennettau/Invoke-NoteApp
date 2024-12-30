@@ -22,7 +22,10 @@ function Handle-Request {
             switch ($Request.Url.AbsolutePath) {
                 "/" {
                     $page = Get-Content -Path "html/index.html" -Raw
-                    $postTemplate = Get-Content -Path "html/post-template.html" -Raw                                       
+                    $navbarComponent = Get-Content -Path "html/components/navbar.html" -Raw
+                    $page = $page -replace "{{ navbar }}", $navbarComponent
+
+                    $postTemplate = Get-Content -Path "html/components/post-template.html" -Raw
                     $posts = Get-Content -Path "data/blogPosts.json" | ConvertFrom-Json
 
                     $postHtml = $posts.posts | Sort-Object -Descending "id" | ForEach-Object {
@@ -39,6 +42,9 @@ function Handle-Request {
                 }
                 "/create" {
                     $page = Get-Content -Path "html/create.html" -Raw
+                    $navbarComponent = Get-Content -Path "html/components/navbar.html" -Raw
+                    $page = $page -replace "{{ navbar }}", $navbarComponent
+
                     $responseString = $page
                 }
                 "/kill" {
