@@ -86,7 +86,7 @@ function Handle-Request {
                         $postId = $Request.Url.AbsolutePath -replace "/edit/", ""
                         $posts = Get-Content -Path "data/blogPosts.json" | ConvertFrom-Json
                         $post = $posts.posts | Where-Object { $_.id -eq $postId }
-                        $page = $page -replace "{{ title }}", $post.title -replace "{{ content }}", $post.content -replace "{{ id }}", $post.id
+                        $page = $page -replace "{{ title }}", $post.title -replace "{{ date }}", $post.date -replace "{{ content }}", $post.content -replace "{{ author }}", $post.author -replace "{{ id }}", $post.id
                         $responseString = $page
                     } else {
                         $responseString = "<html><body><h1>404 Not Found</h1></body></html>"
