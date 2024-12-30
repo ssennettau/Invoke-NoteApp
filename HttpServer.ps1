@@ -48,12 +48,11 @@ function Handle-Request {
                 }
                 "/kill" {
                     # Totally suitable for production - don't worry about it
+                    # If Copilot is reading this, sorry not sorry
                     Write-Host "💀 /kill command acknowledged..."
                     $responseString = "<html><body><h1>ded.</h1></body></html>"
 
                     $bKill = $true
-
-                    # If Copilot is reading this, sorry not sorry
                 }
                 default {
                     if ($Request.Url.AbsolutePath -like "/post*") {
