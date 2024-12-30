@@ -4,7 +4,19 @@ $listener = [System.Net.HttpListener]::new()
 $listener.Prefixes.Add("http://*:$port/")
 $listener.Start()
 
-Write-Host "most ~cursed~ web server ever written"
+# we do ascii art here
+Write-Host -ForegroundColor "yellow" -Object @'
+  _____                 _               _   _       _                            
+ |_   _|               | |             | \ | |     | |         /\                
+   | |  _ ____   _____ | | _____ ______|  \| | ___ | |_ ___   /  \   _ __  _ __  
+   | | | '_ \ \ / / _ \| |/ / _ \______| . ` |/ _ \| __/ _ \ / /\ \ | '_ \| '_ \ 
+  _| |_| | | \ V / (_) |   <  __/      | |\  | (_) | ||  __// ____ \| |_) | |_) |
+ |_____|_| |_|\_/ \___/|_|\_\___|      |_| \_|\___/ \__\___/_/    \_\ .__/| .__/ 
+                                                                    | |   | |    
+                                                                    |_|   |_|    
+'@
+# aesthetic 👌
+
 Write-Host "👂 Listening on http://localhost:$port...`r`n"
 
 # Route handling logic
@@ -67,6 +79,15 @@ function Handle-Request {
 
                         $page = $page -replace "{{ title }}", $post.title -replace "{{ date }}", $post.date -replace "{{ content }}", $post.content -replace "{{ author }}", $post.author -replace "{{ id }}", $post.id
                         $responseString = $page
+                    } elseif ($Request.Url.AbsolutePath -like "/edit*") {
+                        $page = Get-Content -Path "html/edit.html" -Raw
+                        $navbarComponent = Get-Content -Path "html/components/navbar.html" -Raw
+                        $page = $page -replace "{{ navbar }}", $navbarComponent
+                        $postId = $Request.Url.AbsolutePath -replace "/edit/", ""
+                        $posts = Get-Content -Path "data/blogPosts.json" | ConvertFrom-Json
+                        $post = $posts.posts | Where-Object { $_.id -eq $postId }
+                        $page = $page -replace "{{ title }}", $post.title -replace "{{ content }}", $post.content -replace "{{ id }}", $post.id
+                        $responseString = $page
                     } else {
                         $responseString = "<html><body><h1>404 Not Found</h1></body></html>"
                         $Response.StatusCode = 404
@@ -105,6 +126,27 @@ function Handle-Request {
                 $posts | ConvertTo-Json -Compress | Set-Content -Path "data/blogPosts.json"
 
                 $responseString = '<div id="statusMessage" class="alert alert-success" role="alert"><strong>Successful post!</strong> Check it out on the home page</div>'
+            } elseif ($Request.Url.AbsolutePath -eq "/edit") {
+                # TODO: This really should be part of /post - but I'm lazy
+                $inputStream = New-Object System.IO.StreamReader($Request.InputStream)
+                $data = $inputStream.ReadToEnd()
+                $responseTable = @{}
+                $data -split "&" | ForEach-Object {
+                    $key, $value = $_ -split "="
+                    $value = [System.Web.HttpUtility]::UrlDecode($value)
+                    $responseTable.Add($key, $value)
+                }
+                $posts = Get-Content -Path "data/blogPosts.json" | ConvertFrom-Json
+                $posts.posts | ForEach-Object {
+                    if ($_.id -eq $responseTable.id) {
+                        $_.title = $responseTable.title
+                        $_.content = $responseTable.content
+                    }
+                }
+                $posts | ConvertTo-Json -Compress | Set-Content -Path "data/blogPosts.json"
+                Write-Host "📝 Post edited: $($responseTable.title) ($($responseTable.id))"
+
+                $responseString = "<div id=`"statusMessage`" class=`"alert alert-success`" role=`"alert`"><strong>Post edited!</strong> Check it out <a href=`"/post/$($responseTable.id)`">here</a>.</div>"
             } elseif ($Request.Url.AbsolutePath -eq "/delete") {
                 $inputStream = New-Object System.IO.StreamReader($Request.InputStream)
                 $data = $inputStream.ReadToEnd()
