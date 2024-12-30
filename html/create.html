@@ -1,0 +1,20 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Invoke-BlogSite</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://unpkg.com/htmx.org@2.0.4" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <h1 class="text-4xl font-bold">Welcome to this horrible site</h1>
+        <p>You were warned</p>
+        <form>
+            title: <input type="text" name="title" /><br />
+            content: <textarea name="content"></textarea><br />
+            <button type="submit" hx-post="/post">Create</button>
+        </form>
+    </body>
+</html>
