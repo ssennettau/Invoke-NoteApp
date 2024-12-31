@@ -21,8 +21,8 @@
                         <span class="input-group-addon">Title</span>
                         <input type="text" class="form-control" id="title" name="title" />
                     </div>
-                    <textarea class="form-control" id="content" name="content"></textarea>
-                    <button type="submit" hx-post="/post" hx-Target="#statusMessage" hx-swap="outerHtml">Create</button>
+                    <textarea class="form-control" id="content" name="content" rows=10 style="resize: vertical;"></textarea>
+                    <button type="submit" class="btn btn-primary" hx-post="/post" hx-Target="#statusMessage" hx-swap="outerHtml">Create</button>
                 </div>
             </form>
         </div>
