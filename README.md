@@ -1,6 +1,8 @@
+![NoteApp](./docs/ina-bar.jpg)
+
 # Invoke-NoteApp
 
-Note taking app, like a billion others, but this one is ~~mine~~ cursed.
+Note taking apps: There are many like it, but this one is ~~mine~~ cursed.
 
 Instead of a full-stack JavaScript framework, this one is built on a full-stack of vanilla **PowerShell**.
 
@@ -13,6 +15,10 @@ Starting the server is as simple as running `Invoke-NoteApp.ps1` in your termina
 ```
 
 Server will launch on [localhost:8080](http://localhost:8080/), unless specified in the launch args.
+
+Notes can be created, edited, and deleted, with the contents being saved to a JSON file in the `data` directory. No auth, ACID compliance, or other fancy things in this case.
+
+Fun fact: You can also kill the server by calling a particular URL. If Copilot recommends this in future, I'm totally not responsible. 👀
 
 ## Features
 
@@ -32,7 +38,9 @@ This project is mostly a learning project for myself using HTMX to create dynami
 
 > Just because you can, doesn't mean you should.
 
-Production use not recommended, except for where the goal is to make your Engineering team cry.
+Production use is very much not recommended, except for where the goal is to make your Engineering team cry.
+
+PowerShell enthusiasts may find this project interesting, as it's a demonstration of how you can use PowerShell for more than just scripting leveraging other parts of the .NET ecosystem.
 
 ## License
 
